@@ -17,7 +17,7 @@ CMD ["java", "-jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLi
 
 WORKDIR /app
 
-RUN apk add --update ca-certificates tini; \
+RUN apk add --update ca-certificates tini=0.17.0-r0; \
     rm -rf /var/cache/apk/* /tmp/*
 
 COPY --from=builder /app/build/libs/app.jar /app/app.jar

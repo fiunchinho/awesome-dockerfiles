@@ -17,6 +17,7 @@ CMD ./app/goapp
 
 WORKDIR /app
 
-RUN apk --no-cache add ca-certificates
+RUN apk add --update ca-certificates tini=0.17.0-r0; \
+    rm -rf /var/cache/apk/* /tmp/*
 
 COPY --from=builder /app/goapp /app/

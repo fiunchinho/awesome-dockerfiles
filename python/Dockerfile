@@ -11,7 +11,7 @@ ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["gunicorn", "--config", "./conf/gunicorn_config.py", "app:app"]
 
 COPY requirements.txt ./app
-RUN apk add --update ca-certificates tini; \
+RUN apk add --update ca-certificates tini=0.17.0-r0; \
 	pip install -r requirements.txt; \
     rm -rf /var/cache/apk/* /tmp/*
 COPY . /app
