@@ -7,9 +7,9 @@ WORKDIR ${WORKDIR}
 COPY build.gradle gradlew gradle.properties ${WORKDIR}/
 COPY gradle ${WORKDIR}/gradle
 # The task `gradle dependencies` will list the dependencies and download them as a side-effect.
-RUN ./gradlew --no-daemon clean dependencies
+RUN ./gradlew --no-daemon clean dependencies --configuration runtime
 COPY . ${WORKDIR}
-RUN ./gradlew --no-daemon build --exclude-task test
+RUN ./gradlew --no-daemon build --exclude-task check
 
 
 FROM openjdk:8-jdk-alpine
