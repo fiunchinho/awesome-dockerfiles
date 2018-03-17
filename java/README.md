@@ -1,5 +1,5 @@
 # Download dependencies from private repositories
-If you need to download dependencies from a private repository, you may need to pass variables to the build process.
+If you need to download dependencies from a private repository, you may need to pass variables to define environment variables to the build process.
 
 You can do that adding build arguments to your Dockerfile
 
