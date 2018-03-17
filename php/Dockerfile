@@ -1,8 +1,10 @@
 FROM composer as builder
 
-WORKDIR /app
+ARG WORKDIR="/app"
 
-COPY composer.json composer.lock /app/
+WORKDIR ${WORKDIR}
+
+COPY composer.json composer.lock ${WORKDIR}/
 RUN composer install  \
     --ignore-platform-reqs \
     --no-ansi \
@@ -11,7 +13,7 @@ RUN composer install  \
     --no-interaction \
     --no-scripts
 
-COPY . /app/
+COPY . ${WORKDIR}
 RUN composer dump-autoload --no-dev --optimize --classmap-authoritative
 
 
@@ -19,13 +21,16 @@ FROM php:7.2-apache
 
 LABEL maintainer="Jose Armesto <jose@armesto.net>"
 
+ARG WORKDIR="/app"
+
+WORKDIR /app
+
 EXPOSE 80
 
 RUN pecl install xdebug-2.6.0; \
     docker-php-ext-enable xdebug; \
-	usermod -u 1000 www-data; \
+    usermod -u 1000 www-data; \
     a2enmod rewrite; \
     chown -R www-data:www-data /var/www/html
 
-WORKDIR /app
-COPY --from=builder /app /var/www/html/
+COPY --from=builder ${WORKDIR} /var/www/html/
