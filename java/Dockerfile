@@ -18,12 +18,14 @@ LABEL maintainer="Jose Armesto <jose@armesto.net>"
 
 ARG WORKDIR="/app"
 
-WORKDIR /app
+WORKDIR ${WORKDIR}
 
 EXPOSE 8080
 
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["java", "-jar", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-XX:MaxRAMFraction=2", "app.jar"]
+CMD ["java", "-jar", "app.jar"]
+
+ENV JAVA_TOOL_OPTIONS "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2"
 
 RUN apk add --update ca-certificates tini=0.17.0-r0; \
     rm -rf /var/cache/apk/* /tmp/*
