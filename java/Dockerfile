@@ -23,11 +23,12 @@ WORKDIR ${WORKDIR}
 EXPOSE 8080
 
 ENTRYPOINT ["/sbin/tini", "--"]
+# Change the name of the jar file with your own name
 CMD ["java", "-jar", "app.jar"]
 
 ENV JAVA_TOOL_OPTIONS "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=2"
 
-RUN apk add --update ca-certificates tini=0.17.0-r0; \
+RUN apk add --update ca-certificates tini=0.16.1-r0; \
     rm -rf /var/cache/apk/* /tmp/*
 
-COPY --from=builder ${WORKDIR}/build/libs/app.jar app.jar
+COPY --from=builder ${WORKDIR}/build/libs/*.jar ${WORKDIR}/
