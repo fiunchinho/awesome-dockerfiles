@@ -1,27 +1,27 @@
-FROM golang:alpine as builder
+FROM golang:1.10-alpine as builder
 
-ARG WORKDIR="/app"
+ENV GOPATH /go
 
-WORKDIR /app
+WORKDIR "$GOPATH/src/github.com/your-name/repo-name"
 
-COPY . ${WORKDIR}
-RUN go build -o goapp
+RUN apk --no-cache add git ca-certificates tini=0.16.1-r0 && \
+    go get -u github.com/golang/dep/...
+
+COPY . .
+
+RUN dep ensure -v --vendor-only && \
+    CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main . && mv main /tmp/
 
 
 FROM alpine:3.7
 
 LABEL maintainer="Jose Armesto <jose@armesto.net>"
 
-ARG WORKDIR="/app"
-
-WORKDIR ${WORKDIR}
-
 EXPOSE 8080
 
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["./app/goapp"]
+CMD ["./main"]
 
-RUN apk add --update ca-certificates tini=0.17.0-r0; \
-    rm -rf /var/cache/apk/* /tmp/*
-
-COPY --from=builder ${WORKDIR}/goapp ${WORKDIR}
+COPY --from=builder /sbin/tini /sbin/tini
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /tmp/main .
